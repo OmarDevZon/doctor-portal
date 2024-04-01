@@ -36,6 +36,7 @@ model User {
   status             userStatus
   createdAt          DateTime   @default(now())
   updateAt           DateTime   @updatedAt
+  Admin              Admin?
 
   @@map("users")
 }
@@ -51,6 +52,7 @@ model Admin {
   status             userStatus
   createdAt          DateTime   @default(now())
   updateAt           DateTime   @updatedAt
+  user               User       @relation(fields: [email], references: [email])
 
-  @@map("admin")
+  @@map("admins")
 }
