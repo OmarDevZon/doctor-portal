@@ -48,8 +48,10 @@ const createAdmin = async (data: any) => {
 
 // find admin service
 const findAdmin = async (param: any) => {
-  const result = prisma.admin.findMany({
-    where: {
+  const addConditions = [];
+
+  if (param.search) {
+    addConditions.push({
       OR: [
         {
           name: {
@@ -64,7 +66,13 @@ const findAdmin = async (param: any) => {
           },
         },
       ],
-    },
+    });
+  }
+
+  const whereCondition = { AND: addConditions };
+
+  const result = prisma.admin.findMany({
+    where: whereCondition,
   });
   return result;
 };
