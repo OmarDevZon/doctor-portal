@@ -3,7 +3,6 @@ import httpStatus from "http-status";
 import sendResponse from "../../../utils/sendResponse";
 import { adminServices } from "./admin.service";
 import { prick } from "../../../utils/prick";
-import { toUSVString } from "util";
 
 export type TUser = {
   email: string;
@@ -21,10 +20,12 @@ const createAdmin = catchAsync(async (req, res) => {
 
 // find admin controllers
 
-
 const findAdmin = catchAsync(async (req, res) => {
-  const filter = prick(req.query , ['name']);
-  const result = await adminServices.findAdmin(filter);
+  const filter = prick(req.query, ["name", "email"]);
+  const pagination = prick(req.query, ["page", "limit"]);
+
+
+  const result = await adminServices.findAdmin(filter, pagination);
   sendResponse(res, {
     statusCode: httpStatus.OK,
     success: true,

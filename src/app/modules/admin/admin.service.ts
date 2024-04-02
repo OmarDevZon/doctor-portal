@@ -1,5 +1,6 @@
-import { Prisma, PrismaClient, userRole } from "@prisma/client";
+import { PrismaClient, userRole } from "@prisma/client";
 import { hashPassword } from "../../../utils/hashPassword";
+import { filter } from "../../../utils/filter";
 
 // create admin
 
@@ -47,41 +48,45 @@ const createAdmin = async (data: any) => {
 };
 
 // find admin service
-const findAdmin = async (param: any) => {
-  //get a object all data without search data
-  const { search, ...filterData } = param;
-  const addConditions: Prisma.AdminWhereInput[] = [];
+const findAdmin = async (param: any, pagination: any) => {
+  // const { search, ...filterData } = param;
+  // const {page, limit} = pagination;
 
-  if (param.search) {
-    addConditions.push({
-      OR: ["name", "email"].map((field) => ({
-        [field]: {
-          contains: param.search,
-          mode: "insensitive",
-        },
-      })),
-    });
+  // // console.log(page, limit, "file name : admin.service line number : +-55");
+
+  // const addConditions = [];
+
+  // if (param.search) {
+  //   addConditions.push({
+  //     OR: ["name", "email"].map((field) => ({
+  //       [field]: {
+  //         contains: param.search,
+  //         mode: "insensitive",
+  //       },
+  //     })),
+  //   });
+  // }
+
+  // if (Object.keys(filterData).length > 0) {
+  //   addConditions.push({
+  //     AND: Object.keys(filterData).map((keys) => ({
+  //       [keys]: {
+  //         equals: filterData[keys],
+  //         mode: "insensitive",
+  //       },
+  //     })),
+  //   });
+  // }
+
+  // const whereCondition = { AND: addConditions };
+
+  // const filter = { where: whereCondition };
+
+  const result = await prisma.admin.findMany(filter(param, pagination));
+
+  if (result.length < 1) {
+    return "User Not Fount";
   }
-
-  if (Object.keys(filterData).length > 0) {
-    addConditions.push({
-      AND: Object.keys(filterData).map((keys) => ({
-        [keys]: {
-          equals: filterData[keys],
-          mode: "insensitive",
-        },
-      })),
-    });
-
-   
-  }
-
-  const whereCondition: Prisma.AdminWhereInput = { AND: addConditions };
-
-  const result = prisma.admin.findMany({
-    where: whereCondition,
-  });
-
   return result;
 };
 
