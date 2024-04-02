@@ -16,10 +16,10 @@ datasource db {
 // user model 
 
 enum userRole {
-  superAdmin
-  admin
-  doctor
-  patient
+  SUPER_ADMIN
+  ADMIN
+  DOCTOR
+  PATIENT
 }
 
 enum userStatus {
@@ -31,28 +31,28 @@ model User {
   id                 String     @id @default(uuid())
   email              String     @unique
   password           String
-  role               userRole
-  needPasswordChange Boolean
-  status             userStatus
+  needPasswordChange Boolean    @default(true)
+  status             userStatus @default(active)
+  isDeleted          Boolean    @default(false)
   createdAt          DateTime   @default(now())
   updateAt           DateTime   @updatedAt
-  Admin              Admin?
+  // admin              Admin?
+  admin              Admin?
 
   @@map("users")
 }
 
 model Admin {
-  id                 String     @id @default(uuid())
-  name               String
-  email              String     @unique
-  profile            String?
-  contactNumber      String
-  role               String     @default("admin")
-  needPasswordChange Boolean
-  status             userStatus
-  createdAt          DateTime   @default(now())
-  updateAt           DateTime   @updatedAt
-  user               User       @relation(fields: [email], references: [email])
+  id            String   @id @default(uuid())
+  name          String
+  email         String   @unique
+  profile       String?
+  contactNumber String
+  role          userRole @default(ADMIN)
+  isDeleted     Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updateAt      DateTime @updatedAt
+  user          User     @relation(fields: [email], references: [email])
 
   @@map("admins")
 }
